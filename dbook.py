@@ -10,7 +10,7 @@ from Crypto import Random
 
 ALLOWED_DBMS = ["mysql", "postgres"]
 CONFIGFILE = os.getenv("HOME") + "/.dbook.conf"
-FORBIDDENNAMES = ["-a", "--add-bookmark", "-d", "--delete-bookmark", "--encrypt", "--decrpyt", "all", "*"]
+FORBIDDENNAMES = ["-a", "--add-bookmark", "-d", "--delete-bookmark", "--encrypt", "--decrpyt", "all", "*", "all", "list", "delete"]
 
 def encrypt(key, source):
     key = bytes(key, "utf8")
@@ -299,7 +299,7 @@ def getBookmarknametoAdd(config):
     print("How do you want to call your Bookmark?")
     while True:
         bookmarkname = str(input(">>> "))
-        if bookmarkname not in config.keys() and bookmarkname not in FORBIDDENNAMES:
+        if bookmarkname.lower() not in config.keys() and bookmarkname.lower() not in FORBIDDENNAMES:
             return bookmarkname
         print("Bookmark already exists\n")
 
@@ -393,9 +393,9 @@ def main():
             config[bookmark] = temp
 
         # add bookmarks
-        if sys.argv[1] == "-a" or sys.argv[1] == "--add-bookmark":
+        if sys.argv[1].lower() in ["-a", "--add-bookmark", "add", "create"]:
             if len(sys.argv) > 2:
-                if sys.argv[2] not in config.keys() and sys.argv[2] not in FORBIDDENNAMES:
+                if sys.argv[2].lower() not in config.keys() and sys.argv[2].lower() not in FORBIDDENNAMES:
                     bookmarkname = sys.argv[2]
                 else:
                     print("The specified bookmark already exists\n")
@@ -406,7 +406,7 @@ def main():
             print("Successfully added bookmark: " + bookmarkname)
 
         # delete bookmarks
-        elif sys.argv[1] == "-d" or sys.argv[1] == "--delete-bookmark":
+        elif sys.argv[1].lower() in ["-d", "--delete-bookmark", "delete", "del", "rm"]:
             if len(sys.argv) > 2:
                 if sys.argv[2] in config.keys():
                     bookmarkname = sys.argv[2]
@@ -419,7 +419,7 @@ def main():
             print("Successfully removed bookmark: " + bookmarkname)
 
         # list bookmarks
-        elif sys.argv[1] == "-l" or sys.argv[1] == "--list-bookmark":
+        elif sys.argv[1].lower() in ["-l", "--list-bookmark", "list", "ls"]:
             if len(sys.argv) > 2:
                 if sys.argv[2].lower() in config.keys():
                     bookmarkname = sys.argv[2].lower()
@@ -440,7 +440,7 @@ def main():
                     print(bookmark)
 
         # encrypt bookmarkfile
-        elif sys.argv[1] == "--encrypt":
+        elif sys.argv[1] in ["--encrypt", "encrypt", "-e"]:
             if crypted:
                 print("Bookmark file is already encrypted. Nothing todo")
                 return 0
@@ -448,7 +448,7 @@ def main():
             pwd = promptNewPassword()
 
         # decrypt bookmarkfile
-        elif sys.argv[1] == "--decrypt":
+        elif sys.argv[1] == ["--decrypt", "decrypt", "-u"]:
             if not crypted:
                 print("Bookmark file is already decrypted. Nothing todo")
                 return 0
