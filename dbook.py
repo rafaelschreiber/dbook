@@ -448,7 +448,7 @@ def main():
             pwd = promptNewPassword()
 
         # decrypt bookmarkfile
-        elif sys.argv[1] == ["--decrypt", "decrypt", "-u"]:
+        elif sys.argv[1] in ["--decrypt", "decrypt", "-u"]:
             if not crypted:
                 print("Bookmark file is already decrypted. Nothing todo")
                 return 0
